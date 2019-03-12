@@ -7,7 +7,7 @@ class: center, middle
 # Agenda
 ## Mandag
 
-1. Installation
+1. Opsætning
 2. Gennemgang af funktioner
 
 ---
@@ -21,21 +21,44 @@ class: center, middle
 
 ---
 
-# Installation
+# Opsætning
 
 Generel installation af pakken og hvordan man overtager lyd outputtet
+
+1. Unity
+2. FMOD Studio
+3. FMOD Studio Unity Integration
+
+???
+Import Package > Custom Package...
+
+---
+
+# Opsætning
+
+FMOD Studio Listener tilføjes din FPS-controller
 
 ---
 
 # Sound banks
 
-Loading af sound banks
+- Formål
+- Build
+- Load i Unity
+
+???
+Sound banks samler alle nødvendige filer fra FMOD Studio, der skal bruges i Unity
+Til små projekter er det nok med *Master Bank*
+Til større kan man gruppere lyde i forskellige banks og loade/unloade dynamisk (for at spare hukommelse)
 
 ---
 
 # Events
 
 Hvordan man starter og stopper et event
+
+- Studio Event Emitter
+- Via custom kode
 
 ---
 
@@ -50,6 +73,16 @@ Hvordan man stopper det
 # Parametre
 
 Hvordan man sender og opdaterer en parameter til et event
+
+```cs
+FMOD.Studio.EventInstance playerState;
+```
+
+---
+
+# Mixing
+
+Live mixing
 
 ---
 
