@@ -1,15 +1,3 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>FMOD + Unity</title>
-  <meta charset="utf-8">
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-
-<body>
-  <textarea id="source">
-
 class: center, middle
 
 # FMOD + Unity
@@ -75,13 +63,3 @@ Lytte til lyd-events og gøre ting baseret på amplitude eller frekvens
 
 - Rytmisk spil (info om BPM og underdelinger)
 - Avanceret anvendelse af spatializer (stealth)
-
-    </textarea>
-  <script src="https://remarkjs.com/downloads/remark-latest.min.js">
-  </script>
-  <script>
-    var slideshow = remark.create();
-  </script>
-</body>
-
-</html>

@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css?family=Arvo:400,700');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+body { 
+    font-family: 'Arvo', serif;
+}
+
+h1, h2, h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+ul, ol {
+    line-height: 2;
+}
+
+.remark-code, .remark-inline-code { 
+    font-family: 'Inconsolata'; 
+}
