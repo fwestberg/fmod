@@ -4,8 +4,8 @@
 
 ### Folders ###
 # Ignore entire Unity and Installers
-Projects/*
-Installers/*
+projects/*
+installers/*
 
 ### macOS ###
 # General
