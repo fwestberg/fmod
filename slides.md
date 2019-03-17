@@ -2,6 +2,10 @@ class: center, middle, title
 
 # FMOD + Unity
 
+???
+- v2.0 er lige udkommet
+- Udleverede komponenter er baseret på v1.10
+
 ---
 
 class: center, middle
@@ -26,10 +30,10 @@ class: center, middle
 3. Evt. hjælp til andre programmeringsproblemer
 
 ---
-class: center, middle, title
-background-image: url(https://media.giphy.com/media/Mp4hQy51LjY6A/giphy.gif)
 
-# Den nemme måde
+class: center, middle, title
+
+# Tilgang
 
 ???
 De fleste funktioner bliver vist udført på 2 måder
@@ -37,9 +41,19 @@ De fleste funktioner bliver vist udført på 2 måder
 ---
 
 class: center, middle, title
+background-image: url(https://media.giphy.com/media/Mp4hQy51LjY6A/giphy.gif)
+
+# Den nemme måde
+
+---
+
+class: center, middle, title
 background-image: url(https://media.giphy.com/media/Ty9Sg8oHghPWg/giphy.gif)
 
 # Den fede måde
+
+???
+Som udgangspunkt er den nemme måde at foretrække til det meste
 
 ---
 
@@ -80,8 +94,10 @@ Den nemme måde at gøre det på
 [FMOD Learn](https://www.fmod.com/resources/documentation-unity?version=2.0&page=game-components.html)
 
 ---
+
 class: center, middle, title
 name: Sound banks
+
 # {{name}}
 
 ???
@@ -91,7 +107,10 @@ name: Sound banks
 - *Strings bank* skal loades, hvis events skal lokaliseres via filsti – i stedet for via GUID (globally unique identifier)
 
 ---
+
 name: Sound banks
+
+<div class="subject">{{name}}</div>
 
 ## Den nemme måde
 Loades automatisk, når spillet startes:
@@ -100,10 +119,11 @@ Loades automatisk, når spillet startes:
 
 *Load Bank Sample Data* kan aktiveres for at reducere latency ved afspilning
 
-<div class="subject">{{name}}</div>
-
 ---
+
 name: Sound banks
+
+<div class="subject">{{name}}</div>
 
 ## Den fede måde
 *(der dog er overkill for de fleste)*
@@ -111,8 +131,6 @@ name: Sound banks
 `Studio Bank Loader` tilføjes GameObject
 
 [Kan også styres via scripts](https://www.fmod.com/resources/documentation-unity?version=2.0&page=game-components.html#loading-and-unloading-from-script)
-
-<div class="subject">{{name}}</div>
 
 ???
 - Som udgangspunkt er den nemme måde klart at foretrække
@@ -126,23 +144,31 @@ name: Events
 
 ---
 
+name: Events
+
+<div class="subject">{{name}}</div>
+
 ## Den nemme måde
 `Studio Event Emitter` tilføjes GameObject – og det fungerer rigtig fint til de fleste ting
 
 [Kan også startes og stoppes via kode](https://www.fmod.com/resources/documentation-unity?version=2.0&page=game-components.html#starting-and-stopping-from-script)
 
-<div class="subject">{{name}}</div>
-
 ---
+
+name: Events
+
+<div class="subject">{{name}}</div>
 
 ## Den fede måde
 Hvis vi vil arbejde dynamisk med events, skal vi bruge en reference:
 ```
+using FMODUnity;
+...
 [EventRef]
 public string variableName
 ```
 
-<div class="subject">{{name}}</div>
+![FMOD EventRef UI](img/eventref-ui.png)
 
 ???
 Hvordan man starter og stopper et event
@@ -190,10 +216,20 @@ void Update()
 }
 ```
 
+---
+
+name: Parametre
+
+<div class="subject">{{name}}</div>
+
+## Den fede måde
+
 Hvis vi har brug for 2-vejs kommunikation, skal vi være endnu smartere:
 
 ```
-FMOD.Studio.EventInstance playerState;
+using FMOD.Studio;
+...
+EventInstance playerState;
 ```
 
 ```
@@ -224,8 +260,6 @@ name: Snapshots
 2. Aktivér *Is Trigger*
 3. Placér objektet i din scene
 4. Tilføj en `Studio Event Emitter` og brug dette til at aktivere/deaktivere dit snapshot
-
-Alternativt kan man starte et almindeligt event, der indeholder et mixer snapshot
 
 ???
 - Hvordan man starter og stopper et mixer snapshot
@@ -267,6 +301,19 @@ name: Snapshots
 
 ## Den fede måde
 
+Snapshots betragtes som events, når de skal kaldes via kode:
+
+```
+EventInstance inGamePause = FMODUnity.RuntimeManager.CreateInstance("snapshot:/IngamePause");
+inGamePause.start();
+```
+
+Alternativt kan man starte et almindeligt event, der indeholder et snapshot instrument
+
+???
+- Intensity kan f.eks. smoothes vha. AHDSR
+- Snapshot instruments giver en anden form for fleksibilitet – mulighed for afspilning af lyde inden/efter f.eks.
+
 ---
 
 class: center, middle, title
@@ -294,14 +341,57 @@ Når der skal mixes, er *Live Update* din ven:
 
 ---
 
-# Nice to know
+class: center, middle, title
+name: Nice to know
 
-- Hvis man skal arbejde med version control (som regel git) i et team, er det bedre at køre et single/multiple platform build og kun dele indholdet af *Build*-mappen
-- Lytte til lyd-events og gøre ting baseret på amplitude eller frekvens
+# {{name}}
 
 ---
 
-# Forespørgsler
+name: Nice to know
 
-- Rytmisk spil (info om BPM og underdelinger)
-- Avanceret anvendelse af spatializer (stealth)
+<div class="subject">{{name}}</div>
+
+# Hvordan laver man et rytmisk spil?
+
+*eller - hvordan hiver jeg info om tempo og takt ud af FMOD?*
+
+---
+
+name: Nice to know
+
+<div class="subject">{{name}}</div>
+
+# Hvordan laver jeg en stealth-effekt?
+
+Brug et mixer snapshot til at dæmpe og forstærke lyde
+
+---
+
+name: Nice to know
+
+<div class="subject">{{name}}</div>
+
+# Hvad med version control?
+
+Hvis man skal arbejde med version control (som regel git) i et team, er det bedst at køre et single/multiple platform build og kun dele indholdet af *Build*-mappen. Alle i teamet skal have adgang til dette, så det er en god idé at lægge det som en mappe i Unity-projektet, der kan refereres med et relativt link.
+
+Nedenstående tilføjes *.gitignore*:
+
+```
+Assets/FMODStudioCache.asset
+Assets/StreamingAssets/*.bank
+fmod.log
+fmod_editor.log
+```
+
+---
+
+name: Nice to know
+
+<div class="subject">{{name}}</div>
+
+# Hvad med FFT og så'n?
+
+???
+- Lytte til lyd-events og gøre ting baseret på amplitude eller frekvens

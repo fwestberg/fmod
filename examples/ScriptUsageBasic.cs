@@ -38,7 +38,7 @@ class ScriptUsageBasic : MonoBehaviour
     //    the UI for selecting events.
     //--------------------------------------------------------------------
     [FMODUnity.EventRef]
-    public string PlayerStateEvent;
+    public string PlayerStateEvent = "";
 
     //--------------------------------------------------------------------
     // 2: Using the EventInstance class will allow us to manage an event
@@ -55,23 +55,23 @@ class ScriptUsageBasic : MonoBehaviour
     //    then all resources will be released.
     //--------------------------------------------------------------------
     [FMODUnity.EventRef]
-    public string DamageEvent;
+    public string DamageEvent = "";
     [FMODUnity.EventRef]
-    public string HealEvent;
+    public string HealEvent = "";
 
 
     //--------------------------------------------------------------------
     //    This event is also one shot, but we want to track it's state and
     //    take action when it ends. We could also change parameter
-    //    values over the lifetime.       
+    //    values over the lifetime.
     //--------------------------------------------------------------------
     [FMODUnity.EventRef]
-    public string PlayerIntroEvent;
+    public string PlayerIntroEvent = "";
     FMOD.Studio.EventInstance playerIntro;
-
 
     public int StartingHealth = 100;
     int health;
+    FMOD.Studio.PARAMETER_ID healthParameterId, fullHealthParameterId;
 
     Rigidbody cachedRigidBody;
 
@@ -97,6 +97,28 @@ class ScriptUsageBasic : MonoBehaviour
         //    such as shown in (8).
         //--------------------------------------------------------------------
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(playerIntro, GetComponent<Transform>(), GetComponent<Rigidbody>());
+
+        //--------------------------------------------------------------------
+        //    Cache a handle to the "health" parameter for usage in Update()
+        //    as shown in (9). Using the handle is much better for performance
+        //    than trying to set the parameter by name every update.
+        //--------------------------------------------------------------------
+        FMOD.Studio.EventDescription healthEventDescription;
+        playerState.getDescription(out healthEventDescription);
+        FMOD.Studio.PARAMETER_DESCRIPTION healthParameterDescription;
+        healthEventDescription.getParameterDescriptionByName("health", out healthParameterDescription);
+        healthParameterId = healthParameterDescription.id;
+
+        //--------------------------------------------------------------------
+        //    Cache a handle to the "FullHeal" parameter for usage in 
+        //    ReceiveHealth() as shown in (13). Even though the event instance
+        //    is recreated each time it is played, the parameter handle will
+        //    always remain the same.
+        //--------------------------------------------------------------------
+        FMOD.Studio.EventDescription fullHealEventDescription = FMODUnity.RuntimeManager.GetEventDescription(HealEvent);
+        FMOD.Studio.PARAMETER_DESCRIPTION fullHealParameterDescription;
+        fullHealEventDescription.getParameterDescriptionByName("FullHeal", out fullHealParameterDescription);
+        fullHealthParameterId = fullHealParameterDescription.id;
     }
 
     void OnDestroy()
@@ -105,7 +127,7 @@ class ScriptUsageBasic : MonoBehaviour
 
         //--------------------------------------------------------------------
         // 6: This shows how to release resources when the unity object is 
-        //    disabled
+        //    disabled.
         //--------------------------------------------------------------------
         playerState.release();
     }
@@ -131,9 +153,9 @@ class ScriptUsageBasic : MonoBehaviour
         playerState.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject, cachedRigidBody));
 
         //--------------------------------------------------------------------
-        //  9: This shows how to update a parameter of an instance every frame
+        // 9: This shows how to update a parameter of an instance every frame
         //--------------------------------------------------------------------
-        playerState.setParameterValue("health", (float)health);
+        playerState.setParameterByID(healthParameterId, (float)health);
 
         //--------------------------------------------------------------------
         // 10: This shows how to query the playback state of an event instance.
@@ -191,12 +213,11 @@ class ScriptUsageBasic : MonoBehaviour
         //     set a parameter before starting.
         //--------------------------------------------------------------------
         FMOD.Studio.EventInstance heal = FMODUnity.RuntimeManager.CreateInstance(HealEvent);
-        heal.setParameterValue("FullHealth", restoreAll ? 1.0f : 0.0f);
+        heal.setParameterByID(fullHealthParameterId, restoreAll ? 1.0f : 0.0f);
         heal.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(gameObject));
         heal.start();
         heal.release();
     }
-
 
     //--------------------------------------------------------------------
     // 14: This section shows how to retrieve a bus, and how busses can be

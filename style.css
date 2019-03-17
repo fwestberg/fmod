@@ -26,13 +26,17 @@ h1, h2, h3 {
     font-size: 3.5em;
 }
 
+.quote {
+    font-size: 2em;
+}
+
 a {
-    color: #1D1075;
+    color: #E83C67;
 }
 
 .remark-code, .remark-inline-code { 
     font-family: 'Inconsolata', monospace; 
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .remark-slide-number {
