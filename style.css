@@ -26,6 +26,10 @@ h1, h2, h3 {
     font-size: 3.5em;
 }
 
+a {
+    color: #1D1075;
+}
+
 .remark-code, .remark-inline-code { 
     font-family: 'Inconsolata', monospace; 
     font-size: 1.2em;
@@ -44,4 +48,13 @@ h1, h2, h3 {
 
 ul, ol {
     line-height: 2;
+}
+
+img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.img-full {
+    background-color: #252525;
 }

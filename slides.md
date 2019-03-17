@@ -56,7 +56,8 @@ Sidstnævnte importeres via *Assets > Import Package > Custom Package...*
 Herefter tilføjes `FMOD Studio Listener` din character controller
 
 ???
-Generel installation af pakken og hvordan man overtager lyd outputtet
+- [Detaljeret gennemgang](https://fmod.com/resources/documentation-unity?version=2.0&page=user-guide.html)
+- Generel installation af pakken og hvordan man overtager lyd outputtet
 
 ---
 
@@ -136,7 +137,7 @@ name: Events
 
 ## Den fede måde
 Hvis vi vil arbejde dynamisk med events, skal vi bruge en reference:
-```cs
+```
 [EventRef]
 public string variableName
 ```
@@ -147,13 +148,20 @@ public string variableName
 Hvordan man starter og stopper et event
 
 ---
+
 class: center, middle, title
-# Parametre
+name: Parametre
+
+# {{name}}
 
 ???
 Hvordan man sender og opdaterer et parameter til et event
 ---
-# Parametre
+
+name: Parametre
+
+<div class="subject">{{name}}</div>
+
 ## Den nemme måde
 
 `Studio Parameter Trigger` tilføjes GameObject
@@ -161,10 +169,14 @@ Hvordan man sender og opdaterer et parameter til et event
 Dette fungerer dog ikke til glidende ændringer – der skal vi have fat i...
 
 ---
-# Parametre
+
+name: Parametre
+
+<div class="subject">{{name}}</div>
+
 ## Den fede måde
 
-```cs
+```
 FMODUnity.StudioEventEmitter emitter;
 void OnEnable()
 {
@@ -180,11 +192,11 @@ void Update()
 
 Hvis vi har brug for 2-vejs kommunikation, skal vi være endnu smartere:
 
-```cs
+```
 FMOD.Studio.EventInstance playerState;
 ```
 
-```cs
+```
 private ParameterInstance speedParameter;
 ```
 
@@ -194,24 +206,91 @@ Læg mærke til `out`, der betyder at funktionen gemmer data i denne variabel
 FMOD 2.0 har også en `Studio Global Parameter Trigger`
 
 ---
+
 class: center, middle, title
-# Snapshots
+name: Snapshots
+
+# {{name}}
+
 ---
-# Snapshots
-Hvordan man starter og stopper et mixer snapshot
+
+name: Snapshots
+
+<div class="subject">{{name}}</div>
+
+## Den nemme måde
+
+1. Opret et GameObject med en `Box Collider`
+2. Aktivér *Is Trigger*
+3. Placér objektet i din scene
+4. Tilføj en `Studio Event Emitter` og brug dette til at aktivere/deaktivere dit snapshot
 
 Alternativt kan man starte et almindeligt event, der indeholder et mixer snapshot
 
+???
+- Hvordan man starter og stopper et mixer snapshot
+- [Creating a reverb zone](https://fmod.com/resources/documentation-unity?version=2.0&page=user-guide.html#creating-a-reverb-zone)
+- [Overriding vs. blending snapshots](https://qa.fmod.com/t/overriding-vs-blending-snapshots/11877/4?u=fwestberg)
+
 ---
 
-# Mixing
+class: center, middle, img-full
+name: Snapshots
+
+<div class="subject">{{name}}</div>
+
+![Reverb Zone - Step 1](/img/reverbZone01.gif)
+
+---
+
+class: center, middle, img-full
+name: Snapshots
+
+<div class="subject">{{name}}</div>
+
+![Reverb Zone - Step 2](/img/reverbZone02.gif)
+
+---
+
+class: center, middle, img-full
+name: Snapshots
+
+<div class="subject">{{name}}</div>
+
+![Reverb Zone - Step 3](/img/reverbZone03.gif)
+
+---
+
+name: Snapshots
+
+<div class="subject">{{name}}</div>
+
+## Den fede måde
+
+---
+
+class: center, middle, title
+name: Mixing
+
+# {{name}}
+
+---
+
+name: Mixing
+
+<div class="subject">{{name}}</div>
+
+## Live update
 
 Når der skal mixes, er *Live Update* din ven:
 
 1. Start spil i Unity [ *CMD+P* ]
-2. Start Live Update i FMOD Studio (nederst i vinduet)
+2. Start Live Update i FMOD Studio [ *F5* ]
 3. Lav ændringer
 4. Build [ *F7* ]
+
+???
+- [Using live update](https://fmod.com/resources/documentation-unity?version=2.0&page=user-guide.html#connect-using-live-update)
 
 ---
 
