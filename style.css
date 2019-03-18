@@ -16,17 +16,17 @@ h1, h2, h3 {
     font-weight: 700;
 }
 
-.title {
+.dark {
     background-color: #252525;
     background-size: cover;
     color: #eeeeee;
 }
 
-.title h1 {
+.dark h1 {
     font-size: 3.5em;
 }
 
-.quote {
+.quote p {
     font-size: 2em;
 }
 
@@ -61,4 +61,8 @@ img {
 
 .img-full {
     background-color: #252525;
+}
+
+.title h1 {
+    text-shadow: 2px 2px #252525;
 }

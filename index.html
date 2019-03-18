@@ -9,15 +9,13 @@
 
 <body>
   <textarea id="source">
-    class: center, middle, title
+    class: center, middle, dark
 
     # FMOD + Unity
     [https://github.com/fwestberg/fmod](https://github.com/fwestberg/fmod)
     
     ???
-    - v2.0 er lige udkommet
-    - Udleverede komponenter er baseret på v1.10 (håber ikke, det volder problemer)
-    - Der er mange måder at gøre de forskellige ting på
+    - Beklager lidt tørre slides, men der er en idé med det
     
     ---
     
@@ -35,18 +33,21 @@
     1. Opsætning
     2. Gennemgang af funktioner
     
-    ---
+    --
     
-    # Agenda
     ## Tirsdag
     
     1. Opsamling
-    2. Implementation i egne projekter
-    3. Evt. hjælp til andre programmeringsproblemer
+    2. Opstart med egne projekter
+
+    ???
+    - Lidt kaos med Jakob Schmid - han kommer på torsdag
+    - I morgen starter undervisningen først kl. 11
+    - Derfor tænker jeg at bruge sidste time i dag på at høre om jeres koncepter i dag
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     
     # Tilgang
     
@@ -55,24 +56,36 @@
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     background-image: url(https://media.giphy.com/media/Mp4hQy51LjY6A/giphy.gif)
     
     # Den nemme måde
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     background-image: url(https://media.giphy.com/media/Ty9Sg8oHghPWg/giphy.gif)
     
     # Den fede måde
     
     ???
-    Som udgangspunkt er den nemme måde at foretrække til det meste
+    - Som udgangspunkt er den nemme måde at foretrække til det meste
+    - Der findes ofte flere varianter end 2
     
     ---
     
+    class: center, middle, dark
+    name: Opsætning
+
     # Opsætning
+
+    ---
+
+    name: Opsætning
+
+    <div class="subject">{{name}}</div>
+
+    # {{name}}
     
     Du skal bruge 3 ting:
     
@@ -85,11 +98,15 @@
     Herefter tilføjes `FMOD Studio Listener` din character controller
     
     ???
+    - DEMO
+    - v2.0 er lige udkommet
+    - Udleverede komponenter er baseret på v1.10 (håber ikke, det volder problemer)
+    - Nogle metoder har skiftet navn - håber jeg har fanget det i mine slides
     - [Detaljeret gennemgang på FMOD Learn](https://fmod.com/resources/documentation-unity?version=2.0&page=user-guide.html)
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     name: Komponenter
     # {{name}}
     
@@ -104,13 +121,15 @@
     - `Studio Parameter Trigger`
     
     ???
+    - DEMO
     - Generelt den nemme måde at gøre det på
     - `Studio Listener` er nødvendig for korrekt spatialisering
+    - Gennemgår dem løbende
     - [Gennemgang på FMOD Learn](https://www.fmod.com/resources/documentation-unity?version=2.0&page=game-components.html)
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     name: Sound banks
     
     # {{name}}
@@ -134,6 +153,9 @@
     
     *Load Bank Sample Data* kan aktiveres for at reducere latency ved afspilning
     
+    ???
+    - DEMO
+
     ---
     
     name: Sound banks
@@ -141,7 +163,7 @@
     <div class="subject">{{name}}</div>
     
     ## Den fede måde
-    *(der dog er overkill for de fleste)*
+    *(der måske ikke er så fed igen)*
     
     1. `Studio Bank Loader` tilføjes GameObject
     2. *Load/Unload* sættes til *None*
@@ -160,13 +182,17 @@
     ???
     - Som udgangspunkt er den nemme måde klart at foretrække
     - Hvis man løber ind i problemer med memory, kan man kigge på den fede måde
+    - Kan også kontrolleres endnu mere nøjagtigt via script
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     name: Events
     # {{name}}
     
+    ???
+    - Vi bruger events til alt
+
     ---
     
     name: Events
@@ -191,29 +217,33 @@
     ```
 
     ???
-    [Gennemgang på FMOD Learn](https://www.fmod.com/resources/documentation-unity?version=2.0&page=game-components.html#starting-and-stopping-from-script)
-    
+    - [Gennemgang på FMOD Learn](https://www.fmod.com/resources/documentation-unity?version=2.0&page=game-components.html#starting-and-stopping-from-script)
+    - ØVELSE 1: Opret et nyt Unity- og FMOD-projekt. Intgrér FMOD og lav et GameObject med `StudioEventListener`. Lav to GameObjects med `StudioEventEmitter`, der placeres til hhv. venstre og højre for din listener.
+    - ØVELSE 2: Importer FPS-controller i scenen, så du kan bevæge dig rundt mellem lydene.
+
     ---
     
-    name: Events
+    class: dark
+    name: Nice to know
     
     <div class="subject">{{name}}</div>
     
-    ## Den fede måde
+    ## Intermezzo
 
     Vi bruger generelt 2 namespaces, når vi laver FMOD scripts:
 
+    
     ```
     FMODUnity
     ```
-    der indeholder klasser til Unity-komponenter og property drawers
-
+    *der indeholder klasser til Unity-komponenter og property drawers*
+    
     og
 
     ```
     FMOD.Studio
     ``` 
-    der indeholder klasser til events, parametre og alt det andet
+    *der indeholder klasser til events, parametre og alt det andet*
 
     ---
     
@@ -264,8 +294,38 @@
     ```
     
     ---
+
+    name: Events
     
-    class: center, middle, title
+    <div class="subject">{{name}}</div>
+    
+    ## One-shots
+
+    Hvis vi bare skal afspille en enkelt lyd uden at ændre den:
+    ```
+    using FMODUnity;
+    ...
+    [EventRef]
+    public string eventPath;
+    
+    public Vector3 position;
+    public GameObject target;
+    
+    void Start(){
+      // På en specifik position (f.eks. transform.position)
+      RuntimeManager.PlayOneShot(eventPath, position);
+      // Så lyden følger et GameObject
+      RuntimeManager.PlayOneShotAttached(eventPath, target);
+    }
+    ```
+
+    ???
+    - Nemt at afspille lyde rundt om spilleren
+    - Afspilles til ende og det er ikke muligt at ændre parametre
+    
+    ---
+    
+    class: center, middle, dark
     name: Parametre
     
     # {{name}}
@@ -292,6 +352,7 @@
         GameObject target = GameObject.Find("NameOfEmitterObject");
         emitter = target.GetComponent<FMODUnity.StudioEventEmitter>();
     }
+
     void Update()
     {
         float value = 1.0f; // calculate the value every frame
@@ -314,30 +375,61 @@
     using FMOD.Studio;
     ...
     [EventRef]
-    public string myEvent1;
-    EventInstance myEventInstance;
+    public string eventPath;
+    private EventInstance eventInstance;
+    private ParameterInstance eventParameter;
 
     void Start(){
-      myEventInstance = RuntimeManager.CreateInstance(myEvent);
-      myEventInstance.start();
-      myEventInstance.setParameterValue("ParameterName", value);
+      eventInstance = RuntimeManager.CreateInstance(eventPath);
+      eventInstance.getParameterByName("fmodParameterName", out eventParameter);
+      eventInstance.start();
+      // Hvis man bare skal sætte en værdi
+      eventInstance.setParameterValueByName("ParameterName", value);
     }
-    ```
-
-
-    ```
-    private ParameterInstance speedParameter;
     ```
     
     Læg mærke til `out`, der betyder at funktionen gemmer data i denne variabel
     
     ???
     - `value` er en float
+    - Det er mere effektivt at hente eventets ID og bruge `setParameterByID()`
     - FMOD 2.0 har også en `Studio Global Parameter Trigger`
     
     ---
+
+    name: Parametre
     
-    class: center, middle, title
+    <div class="subject">{{name}}</div>
+    
+    ## `AttachInstanceToGameObject` 
+
+    Vi kan få en lyds 3D position til at følge en transform (og Rigidbody) hver frame:
+    ```
+    using FMODUnity;
+    using FMOD.Studio;
+    ...
+    [EventRef]
+    public string eventPath;
+    EventInstance eventInstance;
+    
+    private Rigidbody rb;
+    
+    void Start(){
+      rb = GetComponent<Rigidbody>();
+      RuntimeManager.AttachInstanceToGameObject(eventInstance, transform, rb);
+      
+      // Kan også kobles fra (alle objekter) igen
+      RuntimeManager.DetachInstanceFromGameObject(eventInstance);
+    }
+    ```
+
+    ???
+    - Rigidbody kan være `null` (men giver mulighed for at måle på hastighed)
+    - `speed`-parameter er indbygget?
+    
+    ---
+    
+    class: center, middle, dark
     name: Snapshots
     
     # {{name}}
@@ -412,7 +504,7 @@
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     name: Mixing
     
     # {{name}}
@@ -437,7 +529,7 @@
     
     ---
     
-    class: center, middle, title
+    class: center, middle, dark
     name: Nice to know
     
     # {{name}}
@@ -461,6 +553,9 @@
     # Hvordan laver jeg en stealth-effekt?
     
     Brug et mixer snapshot til at dæmpe og forstærke lyde
+
+    ???
+    - i v2.0 kan globale parametre måske bruges til at justere spatializer settings via `StudioEventEmitter.OverrideMaxDistance`
     
     ---
     
