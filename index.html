@@ -263,43 +263,13 @@
     
     ![FMOD EventRef UI](img/eventref-ui.png)
     
-    ???
-    ```
-    using FMODUnity;
-    ...
-    RuntimeManager.PlayOneShot(eventPath, position);
-    ```
-    
     ---
 
     name: Events
     
     <div class="subject">{{name}}</div>
     
-    ## Den fede måde
-
-    Hvis vi vil arbejde dynamisk med events, skal vi bruge en reference:
-    ```
-    using FMODUnity;
-    using FMOD.Studio;
-    ...
-    [EventRef]
-    public string myEvent1;
-    EventInstance myEventInstance;
-
-    void Start(){
-      myEventInstance = RuntimeManager.CreateInstance(myEvent);
-      myEventInstance.start();
-    }
-    ```
-    
-    ---
-
-    name: Events
-    
-    <div class="subject">{{name}}</div>
-    
-    ## One-shots
+    ## Den fede måde – *One-shots*
 
     Hvis vi bare skal afspille en enkelt lyd uden at ændre den:
     ```
@@ -323,6 +293,67 @@
     - Nemt at afspille lyde rundt om spilleren
     - Afspilles til ende og det er ikke muligt at ændre parametre
     
+    ---
+
+    name: Events
+    
+    <div class="subject">{{name}}</div>
+    
+    ## Den fede måde
+
+    Hvis vi vil arbejde dynamisk med events, skal vi bruge en reference:
+    ```
+    using FMODUnity;
+    using FMOD.Studio;
+    ...
+    [EventRef]
+    public string myEvent1;
+    EventInstance myEventInstance;
+    public Vector3 position;
+
+    void Start(){
+      myEventInstance = RuntimeManager.CreateInstance(myEvent);
+      myEventInstance.start();
+      FMOD.ATTRIBUTES_3D positionAttribute = RuntimeUtils.To3DAttributes(position);
+      myEventInstance.set3DAttributes(positionAttribute);
+    }
+    ```
+    
+    ???
+    - Vis Martins Utils
+    - ØVELSE: Lav 2 triggers med tilhørende scripts. Den ene skal spawne et one-shot. Den anden skal spawne vha. `EventInstance`
+
+    ---
+
+    name: Events
+    
+    <div class="subject">{{name}}</div>
+    
+    ## Den fede måde
+
+    Og vi kan selvfølgelig stoppe lyden igen:
+    ```
+    using FMODUnity;
+    using FMOD.Studio;
+    ...
+    [EventRef]
+    public string myEvent1;
+    EventInstance myEventInstance;
+    public Vector3 position;
+
+    void Start(){
+      myEventInstance = RuntimeManager.CreateInstance(myEvent);
+      myEventInstance.start();
+      FMOD.ATTRIBUTES_3D positionAttribute = RuntimeUtils.To3DAttributes(position);
+      myEventInstance.set3DAttributes(positionAttribute);
+    }
+
+    void Stop(){
+      myEventInstance.stop(STOP_MODE.ALLOWFADEOUT);
+      //myEventInstance.stop(STOP_MODE.IMMEDIATE);
+    }
+    ```
+
     ---
     
     class: center, middle, dark
