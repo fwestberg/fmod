@@ -56,14 +56,14 @@
     
     ---
     
-    class: center, middle, dark
+    class: center, middle, dark, img-full
     background-image: url(https://media.giphy.com/media/Mp4hQy51LjY6A/giphy.gif)
     
     # Den nemme måde
     
     ---
     
-    class: center, middle, dark
+    class: center, middle, dark, img-full
     background-image: url(https://media.giphy.com/media/Ty9Sg8oHghPWg/giphy.gif)
     
     # Den fede måde
@@ -412,16 +412,18 @@
 
     void Start(){
       eventInstance = RuntimeManager.CreateInstance(eventPath);
-      eventInstance.getParameterByName("fmodParameterName", out eventParameter);
-      eventInstance.start();
-      // Hvis man bare skal sætte en værdi
-      eventInstance.setParameterValueByName("ParameterName", value);
+      FMOD.ATTRIBUTES_3D positionAttribute = RuntimeUtils.To3DAttributes(//position, //rb);
+      eventInstance.set3DAttributes(positionAttribute);
+      eventInstance.getParameter("nameInFMOD", out eventParameter);
+    }
+
+    void Update(){
+      eventParameter.setValue(//some value);
     }
     ```
     
-    Læg mærke til `out`, der betyder at funktionen gemmer data i denne variabel
-    
     ???
+    - Læg mærke til `out`, der betyder at funktionen gemmer data i denne variabel
     - `value` er en float
     - Det er mere effektivt at hente eventets ID og bruge `setParameterByID()`
     - FMOD 2.0 har også en `Studio Global Parameter Trigger`
@@ -581,13 +583,16 @@
     
     <div class="subject">{{name}}</div>
     
-    # Hvordan laver jeg en stealth-effekt?
-    
-    Brug et mixer snapshot til at dæmpe og forstærke lyde
+    # Lyd til store objekter
+  
+    Der er to metoder, som man kan mikse efter behov:
+
+    1. Separate lyde/events til forskellige dele af objektet
+    2. Brug af *Transceiver*-effekt til at duplikere signal
 
     ???
-    - i v2.0 kan globale parametre måske bruges til at justere spatializer settings via `StudioEventEmitter.OverrideMaxDistance`
-    
+    - DEMO
+
     ---
     
     name: Nice to know
