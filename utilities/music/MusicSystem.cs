@@ -21,7 +21,7 @@
 //      - Dependence on singleton base class (can be omitted)
 //      - Public variable for setting the event path (with [EventRef])
 //      - Inclusion of beat markers
-//      - TODO: Event for other classes
+//      - Event functionality: other classes can subscribe to TimelineChanged
 //
 //--------------------------------------------------------------------
 
@@ -29,27 +29,26 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using FMODUnity;
+using FMOD.Studio;
 
-class MusicSystem : Singleton<MusicSystem>
+public class MusicSystem : Singleton<MusicSystem>
 {
-    // Variables that are modified in the callback need to be part of a seperate class.
-    // This class needs to be 'blittable' otherwise it can't be pinned in memory.
-    [StructLayout(LayoutKind.Sequential)]
-    class TimelineInfo
-    {
-        public int currentMusicBar = 0;
-        public int currentMusicBeat = 0;
-        public FMOD.StringWrapper lastMarker = new FMOD.StringWrapper();
-    }
-
+    // Here we specify the path for our music event in FMOD
     [EventRef]
     public string eventPath;
+    public EventInstance musicInstance;
+
+    EVENT_CALLBACK beatCallback;
 
     TimelineInfo timelineInfo;
     GCHandle timelineHandle;
 
-    FMOD.Studio.EVENT_CALLBACK beatCallback;
-    FMOD.Studio.EventInstance musicInstance;
+    // Other classes must subscribe to the TimelineChanged event
+    public delegate void TimelineAction(object sender, TimelineEventArgs args);
+    public static event TimelineAction TimelineChanged;
+
+    // Check this in the inspector to show a small GUI with bar, beat and marker information on the screen
+    public bool showGUI;
 
     void Start()
     {
@@ -57,16 +56,17 @@ class MusicSystem : Singleton<MusicSystem>
 
         // Explicitly create the delegate object and assign it to a member so it doesn't get freed
         // by the garbage collected while it's being used
-        beatCallback = new FMOD.Studio.EVENT_CALLBACK(BeatEventCallback);
+        beatCallback = new EVENT_CALLBACK(BeatEventCallback);
 
-        musicInstance = FMODUnity.RuntimeManager.CreateInstance(eventPath);
+        musicInstance = RuntimeManager.CreateInstance(eventPath);
 
         // Pin the class that will store the data modified during the callback
         timelineHandle = GCHandle.Alloc(timelineInfo, GCHandleType.Pinned);
         // Pass the object through the userdata of the instance
         musicInstance.setUserData(GCHandle.ToIntPtr(timelineHandle));
 
-        musicInstance.setCallback(beatCallback, FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_BEAT | FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+        musicInstance.setCallback(beatCallback, EVENT_CALLBACK_TYPE.TIMELINE_BEAT | EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+
         musicInstance.start();
     }
 
@@ -80,11 +80,12 @@ class MusicSystem : Singleton<MusicSystem>
 
     void OnGUI()
     {
-        GUILayout.Box(String.Format("Bar = {0}, Beat = {1} Last Marker = {2}", timelineInfo.currentMusicBar, timelineInfo.currentMusicBeat, (string)timelineInfo.lastMarker));
+        if(showGUI)
+            GUILayout.Box(String.Format("Bar = {0}, Beat = {1}, Last Marker = {2}", timelineInfo.currentMusicBar, timelineInfo.currentMusicBeat, (string)timelineInfo.lastMarker));
     }
 
-    [AOT.MonoPInvokeCallback(typeof(FMOD.Studio.EVENT_CALLBACK))]
-    static FMOD.RESULT BeatEventCallback(FMOD.Studio.EVENT_CALLBACK_TYPE type, FMOD.Studio.EventInstance instance, IntPtr parameterPtr)
+    [AOT.MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+    static FMOD.RESULT BeatEventCallback(EVENT_CALLBACK_TYPE type, EventInstance instance, IntPtr parameterPtr)
     {
         // Retrieve the user data
         IntPtr timelineInfoPtr;
@@ -101,20 +102,25 @@ class MusicSystem : Singleton<MusicSystem>
 
             switch (type)
             {
-                case FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_BEAT:
+                case EVENT_CALLBACK_TYPE.TIMELINE_BEAT:
                     {
-                        var parameter = (FMOD.Studio.TIMELINE_BEAT_PROPERTIES)Marshal.PtrToStructure(parameterPtr, typeof(FMOD.Studio.TIMELINE_BEAT_PROPERTIES));
+                        var parameter = (TIMELINE_BEAT_PROPERTIES)Marshal.PtrToStructure(parameterPtr, typeof(TIMELINE_BEAT_PROPERTIES));
                         timelineInfo.currentMusicBar = parameter.bar;
                         timelineInfo.currentMusicBeat = parameter.beat;
                     }
                     break;
-                case FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER:
+                case EVENT_CALLBACK_TYPE.TIMELINE_MARKER:
                     {
-                        var parameter = (FMOD.Studio.TIMELINE_MARKER_PROPERTIES)Marshal.PtrToStructure(parameterPtr, typeof(FMOD.Studio.TIMELINE_MARKER_PROPERTIES));
+                        var parameter = (TIMELINE_MARKER_PROPERTIES)Marshal.PtrToStructure(parameterPtr, typeof(TIMELINE_MARKER_PROPERTIES));
                         timelineInfo.lastMarker = parameter.name;
                     }
                     break;
             }
+
+            // Raise the TimelineChanged event (if it is not null)
+            TimelineEventArgs args = new TimelineEventArgs();
+            args.Info = timelineInfo;
+            TimelineChanged?.Invoke(MusicSystem.Instance, args);
         }
         return FMOD.RESULT.OK;
     }

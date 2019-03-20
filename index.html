@@ -14,9 +14,6 @@
     # FMOD + Unity
     [https://github.com/fwestberg/fmod](https://github.com/fwestberg/fmod)
     
-    ???
-    - Beklager lidt tørre slides, men der er en idé med det
-    
     ---
     
     class: center, middle, quote
@@ -39,11 +36,6 @@
     
     1. Opsamling
     2. Opstart med egne projekter
-
-    ???
-    - Lidt kaos med Jakob Schmid - han kommer på torsdag
-    - I morgen starter undervisningen først kl. 11
-    - Derfor tænker jeg at bruge sidste time i dag på at høre om jeres koncepter i dag
     
     ---
     
@@ -100,8 +92,8 @@
     ???
     - DEMO
     - v2.0 er lige udkommet
-    - Udleverede komponenter er baseret på v1.10 (håber ikke, det volder problemer)
-    - Nogle metoder har skiftet navn - håber jeg har fanget det i mine slides
+    - Udleverede komponenter er baseret på v1.10
+    - Nogle metoder har skiftet navn, så jeg anbefaler, at man holder sig til v1.10 for nu (for at sikre komponenterne virker)
     - [Detaljeret gennemgang på FMOD Learn](https://fmod.com/resources/documentation-unity?version=2.0&page=user-guide.html)
     
     ---
@@ -124,7 +116,6 @@
     - DEMO
     - Generelt den nemme måde at gøre det på
     - `Studio Listener` er nødvendig for korrekt spatialisering
-    - Gennemgår dem løbende
     - [Gennemgang på FMOD Learn](https://www.fmod.com/resources/documentation-unity?version=2.0&page=game-components.html)
     
     ---
@@ -191,7 +182,7 @@
     # {{name}}
     
     ???
-    - Vi bruger events til alt
+    - Vi starter og stopper også snapshots via events
 
     ---
     
@@ -236,7 +227,7 @@
     ```
     FMODUnity
     ```
-    *der indeholder klasser til Unity-komponenter og property drawers*
+    *der indeholder klasser til Unity-komponenter og attributes*
     
     og
 
@@ -258,7 +249,7 @@
     using FMODUnity;
     ...
     [EventRef]
-    public string myEvent1
+    public string eventPath
     ```
     
     ![FMOD EventRef UI](img/eventref-ui.png)
@@ -289,9 +280,7 @@
     }
     ```
 
-    ???
-    - Nemt at afspille lyde rundt om spilleren
-    - Afspilles til ende og det er ikke muligt at ændre parametre
+    One-shots afspilles til ende, og det er ikke muligt at ændre parametre
     
     ---
 
@@ -307,15 +296,15 @@
     using FMOD.Studio;
     ...
     [EventRef]
-    public string myEvent1;
-    EventInstance myEventInstance;
+    public string eventPath;
+    EventInstance eventInstance;
     public Vector3 position;
 
     void Start(){
-      myEventInstance = RuntimeManager.CreateInstance(myEvent);
-      myEventInstance.start();
+      eventInstance = RuntimeManager.CreateInstance(myEvent);
+      eventInstance.start();
       FMOD.ATTRIBUTES_3D positionAttribute = RuntimeUtils.To3DAttributes(position);
-      myEventInstance.set3DAttributes(positionAttribute);
+      eventInstance.set3DAttributes(positionAttribute);
     }
     ```
     
@@ -337,100 +326,26 @@
     using FMOD.Studio;
     ...
     [EventRef]
-    public string myEvent1;
-    EventInstance myEventInstance;
+    public string eventPath;
+    EventInstance eventInstance;
     public Vector3 position;
 
     void Start(){
-      myEventInstance = RuntimeManager.CreateInstance(myEvent);
-      myEventInstance.start();
+      eventInstance = RuntimeManager.CreateInstance(myEvent);
+      eventInstance.start();
       FMOD.ATTRIBUTES_3D positionAttribute = RuntimeUtils.To3DAttributes(position);
-      myEventInstance.set3DAttributes(positionAttribute);
+      eventInstance.set3DAttributes(positionAttribute);
     }
 
     void Stop(){
-      myEventInstance.stop(STOP_MODE.ALLOWFADEOUT);
-      //myEventInstance.stop(STOP_MODE.IMMEDIATE);
+      eventInstance.stop(STOP_MODE.ALLOWFADEOUT);
+      //eventInstance.stop(STOP_MODE.IMMEDIATE);
     }
     ```
 
     ---
-    
-    class: center, middle, dark
-    name: Parametre
-    
-    # {{name}}
-    
-    ???
-    Hvordan man sender og opdaterer et parameter til et event
-    ---
-    
-    name: Parametre
-    
-    <div class="subject">{{name}}</div>
-    
-    ## Den nemme måde
-    
-    `Studio Parameter Trigger` tilføjes GameObject og styres vha. Unity events eller simpel scripting:
-    
-    ```
-    using FMODUnity;
-    ...
-    StudioEventEmitter emitter;
-    
-    void Start()
-    {
-        GameObject target = GameObject.Find("NameOfEmitterObject");
-        emitter = target.GetComponent<FMODUnity.StudioEventEmitter>();
-    }
 
-    void Update()
-    {
-        float value = 1.0f; // calculate the value every frame
-        emitter.SetParameter("ParameterName", value);
-    }
-    ```
-    
-    ---
-    
-    name: Parametre
-    
-    <div class="subject">{{name}}</div>
-    
-    ## Den fede måde
-    
-    Hvis vi har brug for 2-vejs kommunikation, skal vi være endnu smartere:
-    
-    ```
-    using FMODUnity;
-    using FMOD.Studio;
-    ...
-    [EventRef]
-    public string eventPath;
-    private EventInstance eventInstance;
-    private ParameterInstance eventParameter;
-
-    void Start(){
-      eventInstance = RuntimeManager.CreateInstance(eventPath);
-      FMOD.ATTRIBUTES_3D positionAttribute = RuntimeUtils.To3DAttributes(//position, //rb);
-      eventInstance.set3DAttributes(positionAttribute);
-      eventInstance.getParameter("nameInFMOD", out eventParameter);
-    }
-
-    void Update(){
-      eventParameter.setValue(//some value);
-    }
-    ```
-    
-    ???
-    - Læg mærke til `out`, der betyder at funktionen gemmer data i denne variabel
-    - `value` er en float
-    - Det er mere effektivt at hente eventets ID og bruge `setParameterByID()`
-    - FMOD 2.0 har også en `Studio Global Parameter Trigger`
-    
-    ---
-
-    name: Parametre
+    name: Events
     
     <div class="subject">{{name}}</div>
     
@@ -458,7 +373,82 @@
 
     ???
     - Rigidbody kan være `null` (men giver mulighed for at måle på hastighed)
-    - `speed`-parameter er indbygget?
+    - `speed`-parameter er indbygget
+    
+    ---
+    
+    class: center, middle, dark
+    name: Parametre
+    
+    # {{name}}
+    
+    ???
+    Hvordan man sender og opdaterer et parameter til et event
+    ---
+    
+    name: Parametre
+    
+    <div class="subject">{{name}}</div>
+    
+    ## Den nemme måde
+    
+    `Studio Parameter Trigger` tilføjes GameObject og styres vha. Unity events.
+
+    Parametre kan også indstilles vha. følgende metoder på `StudioEventEmitter`:
+    
+    ```
+    using FMODUnity;
+    ...
+    StudioEventEmitter emitter;
+    
+    void Start()
+    {
+        emitter = GetComponent<FMODUnity.StudioEventEmitter>();
+    }
+
+    void Update()
+    {
+        float value = 1.0f; // Lav en smart udregning hver frame
+        emitter.SetParameter("ParameterName", value);
+    }
+    ```
+    
+    ---
+    
+    name: Parametre
+    
+    <div class="subject">{{name}}</div>
+    
+    ## Den fede måde
+    
+    Hvis vi vil have mere fleksibilitet, skal vi være lidt smartere:
+    
+    ```
+    using FMODUnity;
+    using FMOD.Studio;
+    ...
+    [EventRef]
+    public string eventPath;
+    private EventInstance eventInstance;
+    private ParameterInstance eventParameter; <!--TODO: ParameterInstance er udgået i v2.0 -->
+
+    void Start(){
+      eventInstance = RuntimeManager.CreateInstance(eventPath);
+      FMOD.ATTRIBUTES_3D positionAttribute = RuntimeUtils.To3DAttributes(//position, //rb);
+      eventInstance.set3DAttributes(positionAttribute);
+      eventInstance.getParameter("nameInFMOD", out eventParameter);
+    }
+
+    void Update(){
+      eventParameter.setValue(//some value);
+    }
+    ```
+    
+    ???
+    - Læg mærke til `out`, der betyder at funktionen gemmer data i denne variabel
+    - `value` er en float
+    - `ParameterInstance` er udgået i v2.0. Nu skal man referere via `FMOD.Studio.PARAMETER_ID`
+    - FMOD 2.0 har også en `Studio Global Parameter Trigger`
     
     ---
     
@@ -524,8 +514,13 @@
     
     ```
     using FMODUnity;
+    using FMOD.Studio;
     ...
-    EventInstance mySnap = RuntimeManager.CreateInstance("snapshot:/mySnap");
+    [EventRef]
+    public string snapPath;
+    EventInstance mySnap;
+    ...
+    EventInstance mySnap = RuntimeManager.CreateInstance(snapPath);
     mySnap.start();
     ```
     
@@ -573,25 +568,50 @@
     
     <div class="subject">{{name}}</div>
     
-    # Hvordan laver man et rytmisk spil?
-    
-    *eller - hvordan hiver jeg info om tempo og takt ud af FMOD?*
-    
-    ---
-    
-    name: Nice to know
-    
-    <div class="subject">{{name}}</div>
-    
     # Lyd til store objekter
   
-    Der er to metoder, som man kan mikse efter behov:
+    Der er to metoder, som man kan blande efter behov:
 
     1. Separate lyde/events til forskellige dele af objektet
     2. Brug af *Transceiver*-effekt til at duplikere signal
 
     ???
     - DEMO
+
+    ---
+
+    name: Nice to know
+    
+    <div class="subject">{{name}}</div>
+    
+    # Lyd til animationer
+
+    Skal kaldes via [Animation events](https://docs.unity3d.com/Manual/animeditor-AnimationEvents.html)
+
+    ???
+    - Bliver også gennemgået i [denne tutorial fra FMOD](https://youtu.be/nnT2-ldNEHs)
+
+    ---
+    
+    name: Nice to know
+    
+    <div class="subject">{{name}}</div>
+    
+    # Ikke-konforme colliders/triggers
+
+    Det kan være nødvendigt at lave sine egne colliders/triggers. Man kan f.eks. bruge [ProBuilder](http://www.procore3d.com/probuilder/)
+    
+    Ofte er det dog en god idé at tænke sig om en ekstra gang. Måske kan man løse problemet vha. almindelige colliders og en lille smule scripting.
+
+    ---
+
+    name: Nice to know
+    
+    <div class="subject">{{name}}</div>
+    
+    # Hvordan bruger man takter og taktslag?
+    
+    [Scripts på Github](https://github.com/fwestberg/fmod/blob/master/utilities/music)
 
     ---
     
@@ -611,18 +631,6 @@
     fmod.log
     fmod_editor.log
     ```
-    
-    ---
-    
-    name: Nice to know
-    
-    <div class="subject">{{name}}</div>
-    
-    # Hvad med FFT og så'n?
-    
-    ???
-    - Lytte til lyd-events og gøre ting baseret på amplitude eller frekvens
-    
     </textarea>
   <script src="https://remarkjs.com/downloads/remark-latest.min.js">
   </script>
